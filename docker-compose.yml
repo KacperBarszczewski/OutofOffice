@@ -1,15 +1,15 @@
 version: '3.8'
 
 services:
-  DB:
-    container_name: mysql
-    image: mysql:8.4.0
+  db:
+    container_name: MSSQL
+    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
     environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: OutOfOfficeDB
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Admin123!"
     ports:
-      - "3306:3306"
+      - "1433:1433"
     volumes:
-      - ./DB/db_data:/var/lib/mysql
+      - ./DB/data:/var/opt/mssql/data
+      - ./DB/log:/var/opt/mssql/log
+      - ./DB/secrets:/var/opt/mssql/secrets
