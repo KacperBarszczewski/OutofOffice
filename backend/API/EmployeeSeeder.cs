@@ -1,4 +1,5 @@
 ﻿using API.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace API
 {
@@ -18,9 +19,13 @@ namespace API
             {
                 if (!_dbContext.Employees.Any())
                 {
+                    _dbContext.Database.ExecuteSqlRaw("ALTER TABLE Employees NOCHECK CONSTRAINT ALL");
+
                     var employees = GetEmployees();
                     _dbContext.Employees.AddRange(employees);
                     _dbContext.SaveChanges();
+
+                    _dbContext.Database.ExecuteSqlRaw("ALTER TABLE Employees CHECK CONSTRAINT ALL");
                 }
             }
         }

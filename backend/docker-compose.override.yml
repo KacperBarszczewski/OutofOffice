@@ -12,3 +12,26 @@ services:
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+
+  db:
+    container_name: MSSQL
+    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Admin123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ../DB/data:/var/opt/mssql/data
+      - ../DB/log:/var/opt/mssql/log
+      - ../DB/secrets:/var/opt/mssql/secrets
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
