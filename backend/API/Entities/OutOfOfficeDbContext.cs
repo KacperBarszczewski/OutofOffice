@@ -2,7 +2,7 @@
 
 namespace API.Entities
 {
-    public class OutOfOfficeDbContext: DbContext
+    public class OutOfOfficeDbContext : DbContext
     {
         private string _connectionString = "Server=MSSQL,1433;Database=OutOfOfficeDb;User Id=sa;Password=Admin123!;TrustServerCertificate=True;";
         public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
@@ -26,8 +26,8 @@ namespace API.Entities
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<ApprovalRequest>()
-                .HasOne(ar => ar.LeaveRequest) 
-                .WithMany() 
+                .HasOne(ar => ar.LeaveRequest)
+                .WithMany()
                 .HasForeignKey(ar => ar.LeaveRequestID)
                 .OnDelete(DeleteBehavior.NoAction);
         }

@@ -38,8 +38,8 @@ namespace API
                 {
                     FullName = "Admin",
                     Subdivision = "Admin",
-                    Position = "Admin",
-                    Status = "Active",
+                    Position =EmployeePosition.Administrator,
+                    Status = EmployeeStatus.Active,
                     PeoplePartnerID = 0,
                     OutOfOfficeBalance = 0,
                 }
