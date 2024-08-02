@@ -4,16 +4,15 @@ namespace API.Entities
 {
     public class OutOfOfficeDbContext : DbContext
     {
-        private string _connectionString = "Server=MSSQL,1433;Database=OutOfOfficeDb;User Id=sa;Password=Admin123!;TrustServerCertificate=True;";
+        public OutOfOfficeDbContext(DbContextOptions<OutOfOfficeDbContext> options): base(options)
+        {
+        }
+
         public DbSet<ApprovalRequest> ApprovalRequests { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<Project> Projects { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionString);
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
