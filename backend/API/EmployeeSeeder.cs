@@ -14,7 +14,7 @@ namespace API
 
         public void Seed()
         {
-            Console.WriteLine("CanConnsct: "+ _dbContext.Database.CanConnect());
+            Console.WriteLine("CanConnsct: " + _dbContext.Database.CanConnect());
             if (_dbContext.Database.CanConnect())
             {
                 if (!_dbContext.Employees.Any())

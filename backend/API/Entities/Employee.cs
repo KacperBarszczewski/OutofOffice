@@ -23,7 +23,7 @@
         public EmployeeStatus Status { get; set; }
         public int PeoplePartnerID { get; set; }
         public int OutOfOfficeBalance { get; set; }
-        public string? Photo { get; set;}
+        public string? Photo { get; set; }
 
         public virtual Employee? PeoplePartner { get; set; }
 

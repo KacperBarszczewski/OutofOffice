@@ -4,7 +4,7 @@ namespace API.Entities
 {
     public class OutOfOfficeDbContext : DbContext
     {
-        public OutOfOfficeDbContext(DbContextOptions<OutOfOfficeDbContext> options): base(options)
+        public OutOfOfficeDbContext(DbContextOptions<OutOfOfficeDbContext> options) : base(options)
         {
         }
 

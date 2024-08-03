@@ -4,8 +4,8 @@
     {
         Vacation,
         Sickness,
-        ChildCare, 
-        Training, 
+        ChildCare,
+        Training,
         PersonalMatters
     }
 
