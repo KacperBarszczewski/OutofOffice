@@ -21,6 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<OutOfOfficeDbContext>();
 builder.Services.AddScoped<EmployeeSeeder>();
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 

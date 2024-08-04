@@ -1,5 +1,6 @@
 ﻿using API.Entities;
 using API.Models;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -8,10 +9,12 @@ namespace API.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly OutOfOfficeDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public EmployeeController(OutOfOfficeDbContext dbContext)
+        public EmployeeController(OutOfOfficeDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -19,7 +22,9 @@ namespace API.Controllers
         {
             var employees = _dbContext.Employees.ToList();
 
-            return Ok(employees);
+            var employeesDto = _mapper.Map<List<EmployeeDto>>(employees);
+
+            return Ok(employeesDto);
         }
 
         [HttpGet("{id}")]
@@ -32,7 +37,9 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return Ok(employee);
+            var employeeDto = _mapper.Map<EmployeeDto>(employee);
+
+            return Ok(employeeDto);
         }
     }
 }
