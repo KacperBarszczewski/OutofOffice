@@ -2,6 +2,7 @@
 using API.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -17,6 +18,22 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        [HttpPost]
+        public ActionResult CreateEmployee([FromBody] CreateEmployeeDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var employee = _mapper.Map<Employee>(dto);
+            _dbContext.Employees.Add(employee);
+            _dbContext.SaveChanges();
+
+            return Created($"api/emloyee/{employee.ID}", null);
+
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<EmployeeDto>> GetAll()
         {
@@ -30,7 +47,9 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public ActionResult<EmployeeDto> GetById([FromRoute] int id)
         {
-            var employee = _dbContext.Employees.FirstOrDefault(e => e.ID == id);
+            var employee = _dbContext.Employees
+                .Include(e => e.PeoplePartner)
+                .FirstOrDefault(e => e.ID == id);
 
             if (employee == null)
             {
