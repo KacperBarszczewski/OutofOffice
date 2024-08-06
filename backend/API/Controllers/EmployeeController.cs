@@ -1,21 +1,17 @@
-﻿using API.Entities;
-using API.Models;
-using AutoMapper;
+﻿using API.Models;
+using API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     [Route("api/employee")]
     public class EmployeeController : ControllerBase
     {
-        private readonly OutOfOfficeDbContext _dbContext;
-        private readonly IMapper _mapper;
+        private readonly IEmployeeService _employeeService;
 
-        public EmployeeController(OutOfOfficeDbContext dbContext, IMapper mapper)
+        public EmployeeController(IEmployeeService employeeService)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            _employeeService = employeeService;
         }
 
         [HttpPost]
@@ -26,20 +22,16 @@ namespace API.Controllers
                 return BadRequest(ModelState);
             }
 
-            var employee = _mapper.Map<Employee>(dto);
-            _dbContext.Employees.Add(employee);
-            _dbContext.SaveChanges();
+            var id = _employeeService.Create(dto);
 
-            return Created($"api/emloyee/{employee.ID}", null);
+            return Created($"api/employee/{id}", null);
 
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<EmployeeDto>> GetAll()
         {
-            var employees = _dbContext.Employees.ToList();
-
-            var employeesDto = _mapper.Map<List<EmployeeDto>>(employees);
+            var employeesDto = _employeeService.GetAll();
 
             return Ok(employeesDto);
         }
@@ -47,16 +39,12 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public ActionResult<EmployeeDto> GetById([FromRoute] int id)
         {
-            var employee = _dbContext.Employees
-                .Include(e => e.PeoplePartner)
-                .FirstOrDefault(e => e.ID == id);
+            var employeeDto = _employeeService.GetById(id);
 
-            if (employee == null)
+            if (employeeDto == null)
             {
                 return NotFound();
             }
-
-            var employeeDto = _mapper.Map<EmployeeDto>(employee);
 
             return Ok(employeeDto);
         }

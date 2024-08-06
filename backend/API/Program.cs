@@ -1,5 +1,6 @@
 using API;
 using API.Entities;
+using API.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -22,7 +23,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<OutOfOfficeDbContext>();
 builder.Services.AddScoped<EmployeeSeeder>();
 builder.Services.AddAutoMapper(typeof(Program));
-
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 var app = builder.Build();
 
 //configure
