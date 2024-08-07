@@ -11,6 +11,7 @@ namespace API.Services
         IEnumerable<EmployeeDto> GetAll();
         int Create(CreateEmployeeDto dto);
         bool Delete(int id);
+        bool Update(int id, UpdateEmployeeDto dto);
     }
 
 
@@ -55,6 +56,24 @@ namespace API.Services
             _dbContext.SaveChanges();
 
             return employee.ID;
+        }
+
+        public bool Update(int id, UpdateEmployeeDto dto)
+        {
+            var employee = _dbContext.Employees.FirstOrDefault(e => e.ID == id);
+
+            if (employee is null) return false;
+
+            employee.Subdivision = dto.Subdivision;
+            employee.Position = dto.Position;
+            employee.Status = dto.Status;
+            employee.PeoplePartnerID = dto.PeoplePartnerID;
+            employee.OutOfOfficeBalance = dto.OutOfOfficeBalance;
+            employee.Photo = dto.Photo;
+
+            _dbContext.SaveChanges();
+
+            return true;
         }
 
         public bool Delete(int id)
