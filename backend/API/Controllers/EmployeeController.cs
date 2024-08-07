@@ -48,5 +48,18 @@ namespace API.Controllers
 
             return Ok(employeeDto);
         }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            var isDeleted = _employeeService.Delete(id);
+
+            if (!isDeleted)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }

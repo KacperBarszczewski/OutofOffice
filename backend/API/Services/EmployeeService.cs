@@ -10,6 +10,7 @@ namespace API.Services
         EmployeeDto? GetById(int id);
         IEnumerable<EmployeeDto> GetAll();
         int Create(CreateEmployeeDto dto);
+        bool Delete(int id);
     }
 
 
@@ -54,6 +55,18 @@ namespace API.Services
             _dbContext.SaveChanges();
 
             return employee.ID;
+        }
+
+        public bool Delete(int id)
+        {
+            var employee = _dbContext.Employees.FirstOrDefault(e => e.ID == id);
+
+            if (employee is null) return false;
+
+            _dbContext.Employees.Remove(employee);
+            _dbContext.SaveChanges();
+
+            return true;
         }
     }
 }
