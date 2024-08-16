@@ -2,11 +2,15 @@ using API;
 using API.Entities;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//NLog
+//builder.Logging.ClearProviders();
+builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
+builder.Host.UseNLog();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -15,22 +19,32 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddDbContext<OutOfOfficeDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    options.UseSqlServer(connectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 6,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorNumbersToAdd: null);
+    });
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<OutOfOfficeDbContext>();
 builder.Services.AddScoped<EmployeeSeeder>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+
 var app = builder.Build();
 
 //configure
-var scope = app.Services.CreateScope();
-var seeder = scope.ServiceProvider.GetRequiredService<EmployeeSeeder>();
-
-seeder.Seed();
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<EmployeeSeeder>();
+    seeder.Seed();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
