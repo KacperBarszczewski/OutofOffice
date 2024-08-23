@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    build:
+      context: API
+      dockerfile: Dockerfile
+    networks:
+      - mynetwork
+
+  db:
+    container_name: MSSQL
+    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Admin123!"
+    ports:
+      - "1433:1433"
+    volumes:
+      - ../DB/data:/var/opt/mssql/data
+      - ../DB/log:/var/opt/mssql/log
+      - ../DB/secrets:/var/opt/mssql/secrets
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
