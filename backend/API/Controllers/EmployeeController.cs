@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [Route("api/employee")]
+    [ApiController]
     public class EmployeeController : ControllerBase
     {
         private readonly IEmployeeService _employeeService;
@@ -17,15 +18,9 @@ namespace API.Controllers
         [HttpPost]
         public ActionResult CreateEmployee([FromBody] CreateEmployeeDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var id = _employeeService.Create(dto);
 
             return Created($"api/employee/{id}", null);
-
         }
 
         [HttpGet]
@@ -41,23 +36,13 @@ namespace API.Controllers
         {
             var employeeDto = _employeeService.GetById(id);
 
-            if (employeeDto == null)
-            {
-                return NotFound();
-            }
-
             return Ok(employeeDto);
         }
 
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] int id)
         {
-            var isDeleted = _employeeService.Delete(id);
-
-            if (!isDeleted)
-            {
-                return NotFound();
-            }
+            _employeeService.Delete(id);
 
             return NoContent();
         }
@@ -65,17 +50,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         public ActionResult Update([FromRoute] int id, [FromBody] UpdateEmployeeDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var isUpdated = _employeeService.Update(id, dto);
-
-            if (!isUpdated)
-            {
-                return NotFound();
-            }
+            _employeeService.Update(id, dto);
 
             return Ok();
         }

@@ -1,4 +1,5 @@
 ﻿using API.Entities;
+using API.Exceptions;
 using API.Models;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +11,8 @@ namespace API.Services
         EmployeeDto? GetById(int id);
         IEnumerable<EmployeeDto> GetAll();
         int Create(CreateEmployeeDto dto);
-        bool Delete(int id);
-        bool Update(int id, UpdateEmployeeDto dto);
+        void Delete(int id);
+        void Update(int id, UpdateEmployeeDto dto);
     }
 
 
@@ -19,11 +20,13 @@ namespace API.Services
     {
         private readonly OutOfOfficeDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ILogger<EmployeeService> _logger;
 
-        public EmployeeService(OutOfOfficeDbContext dbContext, IMapper mapper)
+        public EmployeeService(OutOfOfficeDbContext dbContext, IMapper mapper, ILogger<EmployeeService> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _logger = logger;
         }
         public EmployeeDto? GetById(int id)
         {
@@ -31,7 +34,7 @@ namespace API.Services
                 .Include(e => e.PeoplePartner)
                 .FirstOrDefault(e => e.ID == id);
 
-            if (employee is null) return null;
+            if (employee is null) throw new NotFoundException("Employee not found");
 
             var employeeDto = _mapper.Map<EmployeeDto>(employee);
 
@@ -58,11 +61,11 @@ namespace API.Services
             return employee.ID;
         }
 
-        public bool Update(int id, UpdateEmployeeDto dto)
+        public void Update(int id, UpdateEmployeeDto dto)
         {
             var employee = _dbContext.Employees.FirstOrDefault(e => e.ID == id);
 
-            if (employee is null) return false;
+            if (employee is null) throw new NotFoundException("Employee not found");
 
             employee.Subdivision = dto.Subdivision;
             employee.Position = dto.Position;
@@ -72,20 +75,18 @@ namespace API.Services
             employee.Photo = dto.Photo;
 
             _dbContext.SaveChanges();
-
-            return true;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
+            _logger.LogError($"Employee with id: {id} DELETE action invoked");
+
             var employee = _dbContext.Employees.FirstOrDefault(e => e.ID == id);
 
-            if (employee is null) return false;
+            if (employee is null) throw new NotFoundException("Employee not found");
 
             _dbContext.Employees.Remove(employee);
             _dbContext.SaveChanges();
-
-            return true;
         }
     }
 }

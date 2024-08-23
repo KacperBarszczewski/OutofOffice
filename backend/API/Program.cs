@@ -1,5 +1,6 @@
 using API;
 using API.Entities;
+using API.Middleware;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
@@ -36,6 +37,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<EmployeeSeeder>();
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddScoped<RequestTimeMiddleware>();
 
 var app = builder.Build();
 
@@ -52,6 +55,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<RequestTimeMiddleware>();
 
 app.UseHttpsRedirection();
 
